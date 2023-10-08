@@ -1,34 +1,39 @@
 <template>
   <h1>一个人的信息</h1>
-  <h2>姓名：{{ person.name }}</h2>
-  <h2>年龄:{{ person.age }}</h2>
-  <button @click="test">测试触发一下Demo组件的Hello事件</button>
+  姓：<input type="text" v-model="person.firstName" />
+  <br />
+  名：<input type="text" v-model="person.lastName" />
+  <br />
+  全名:<input type="text" v-model="person.fullName" />
 </template>
 
 <script>
-import { reactive } from 'vue'
+import { reactive, computed } from 'vue'
 export default {
   name: 'Demo',
-  props: ['msg', 'school'],
-  emits: ['hello'],
-  /*   beforeCreate () {
-      console.log('-------beforeCreate----------')
-    }, */
-  setup (props, context) {
-    console.log('---setup---', props)
-    console.log('---setup---', context.slots)
+  setup () {
     //数据
     let person = reactive({
-      name: '张三',
-      age: 18
+      firstName: '张',
+      lastName: '三'
     })
+    //计算属性--简写形式(没有考虑计算属性被修改)
+    /* person.fullName = computed(() => {
+      return person.firstName + '-' + person.lastName
+    }) */
+    person.fullName = computed({
+      get () {
+        return person.firstName + '-' + person.lastName
+      },
+      set (value) {
+        const nameArr = value.split('-')
+        person.firstName = nameArr[0]
+        person.lastName = nameArr[1]
+      }
 
-    function test () {
-      context.emit('hello', 666)
-    }
+    })
     return {
-      person,
-      test
+      person
     }
   }
 }
